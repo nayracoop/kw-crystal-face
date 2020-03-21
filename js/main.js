@@ -1,4 +1,3 @@
-
 var dataLoaded = false;
 var data;
 
@@ -20,6 +19,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   background(0);
   noStroke();
+  noCursor();
 }
 
 function draw() {
@@ -41,11 +41,12 @@ function draw() {
     // directionalLight(255, 255, 255, -1, 0, 0)
     triangle(0,-5, 5, 5, -5, 5);
     rotateY(map(mouseX, 0, width, -radians(15), radians(15)));
-    rotateX(map(mouseY, 0, width, radians(15), -radians(15)));
-    scale(1.15);
+    rotateX(map(mouseY, 0, height, radians(10), -radians(10)));
+    scale(0.5);
     translate(data.width/-2, data.height/-2);
     for(var i = 0; i < data.triangles.length; i++) {
-      if(data.triangles[i].visible) {
+      
+      if(data.triangles[i] ) {
         //fill("#" + data.triangles[i].color);
         push();
         //translate(0,0,map(mouseY, 0, height, 0, green(color("#" + data.triangles[i].color))*2));
@@ -54,11 +55,13 @@ function draw() {
         //           data.triangles[i].points[1].x, data.triangles[i].points[1].y,
         //           data.triangles[i].points[2].x, data.triangles[i].points[2].y);
         
-        beginShape(TRIANGLES);
+        beginShape();
         specularMaterial("#" + data.triangles[i].color);
-            vertex(data.triangles[i].points[0].x, data.triangles[i].points[0].y, data.triangles[i].points[0].z*0.25);
-            vertex(data.triangles[i].points[1].x, data.triangles[i].points[1].y, data.triangles[i].points[1].z*0.25);
-            vertex(data.triangles[i].points[2].x, data.triangles[i].points[2].y, data.triangles[i].points[2].z*0.25);
+        console.log(data.triangles[i].points)
+          for(let j = 0; j < data.triangles[i].points.length; j++) {
+            console.log(data.triangles[i].points[j])
+            if(data.triangles[i].points[j]) vertex(data.triangles[i].points[j].x, data.triangles[i].points[j].y, data.triangles[i].points[j].z*2);
+          }
           endShape();
         pop();
       }
@@ -68,12 +71,12 @@ function draw() {
 
 function clean () {
 
-  for(var i = 0; i < data.triangles.length; i++) {
+  // for(var i = 0; i < data.triangles.length; i++) {
     
-    var x = (data.triangles[i].points[0].x + data.triangles[i].points[1].x + data.triangles[i].points[2].x) / 3;
-    var y = (data.triangles[i].points[0].y + data.triangles[i].points[1].y + data.triangles[i].points[2].y) / 3;
+  //   var x = (data.triangles[i].points[0].x + data.triangles[i].points[1].x + data.triangles[i].points[2].x) / 3;
+  //   var y = (data.triangles[i].points[0].y + data.triangles[i].points[1].y + data.triangles[i].points[2].y) / 3;
 
-    data.triangles[i].visible = (dist(x, y, data.width/2, data.height/2) < 150);
-  }
+  //   data.triangles[i].visible = (dist(x, y, data.width/2, data.height/2) < 150);
+  // }
 
 }
