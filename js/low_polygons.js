@@ -33,11 +33,14 @@ function draw() {
     scale(1.15);
     //translate(data.width/2, data.height/2);
     for(var i = 0; i < data.triangles.length; i++) {
-      console.log(data.triangles[i]);
       if(data.triangles[i].visible) {
         fill("#" + data.triangles[i].color);
         push();
-          translate(0,0,map(mouseX, 0, width, 0, green(color("#" + data.triangles[i].color))*10));
+          translate(
+            map(mouseX, 0, width, -200, green(color("#" + data.triangles[i].color))*10),
+            0,
+            map(mouseX, 0, width, 0, green(color("#" + data.triangles[i].color))*8)
+          );
           triangle( data.triangles[i].points[0].x,
                     data.triangles[i].points[0].y,
                     data.triangles[i].points[1].x,

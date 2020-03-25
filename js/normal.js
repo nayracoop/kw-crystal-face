@@ -23,25 +23,26 @@ function setup() {
 }
 
 function draw() {
-  ambientLight(255);
+  ambientLight(205);
   //pointLight(255,0,0,0,0,-mouseY);
   
   if(dataLoaded) {
     background(0);
     //translate(width/2, height/2);
     //if(mousePressed) translate(0,0,map(mouseX, 0, width, 0, -200));
-    pointLight(100,100,255,-300,0,500);
-    pointLight(255,100,255,0,0,500);
-    pointLight(100,255,100,0,-300,500);
-    pointLight(100,255,100,300,0,500);
-    pointLight(100,255,255,0,300,500);
-    pointLight(255,100,100,-200,0,-160);
-    // pointLight(0,0,255,mouseY+300-height/2,0,-160);
-    // pointLight(0,100,255,0,mouseX-200,0);
-    // directionalLight(255, 255, 255, -1, 0, 0)
+    pointLight(100,100,255,-500,0,500);
+    pointLight(255,100,255,100,500,100);
+    pointLight(100,255,100,500,0,300);
+    // pointLight(100,255,100,800,100,500);
+    pointLight(255,100,100,500,500,-160);
+    pointLight(255,100,100,-200,500,-160);
+      // pointLight(0,0,255,mouseY+300-height/2,0,-160);
+      // pointLight(0,100,255,0,mouseX-200,0);
+    // directionalLight(255, 255, 255, 5, -15, 5)
+   
     triangle(0,-5, 5, 5, -5, 5);
-    rotateY(map(mouseX, 0, width, -radians(5), radians(5)));
-    rotateX(map(mouseY, 0, height, radians(3), -radians(3)));
+    rotateY(map(mouseX, 0, width, -radians(20), radians(20)));
+    rotateX(map(mouseY, 0, height, radians(15), -radians(20)));
     scale(0.5);
     translate(data.width/-2, data.height/-2);
     for(var i = 0; i < data.triangles.length; i++) {
