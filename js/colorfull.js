@@ -1,7 +1,7 @@
 var dataLoaded = false;
 var data;
 
-axios.get("colorful.json").then(function(response) {
+axios.get("colorfull.json").then(function(response) {
   data = response.data;
   clean();
   dataLoaded = true;

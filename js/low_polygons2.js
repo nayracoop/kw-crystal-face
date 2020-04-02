@@ -31,6 +31,8 @@ function createSketch (settings) {
         p5.background(0);
         p5.scale(1.5);
 
+        p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -p5.radians(5), p5.radians(5)));
+        p5.rotateX(p5.map(p5.mouseY, 0, p5.height, p5.radians(5), -p5.radians(5)));
         for(var i = 0; i < triangles.length; i++) {
           p5.push();
             triangles[i].draw();
@@ -105,6 +107,7 @@ function createSketch (settings) {
       }
 
       draw = () => {
+        p5.rotate(p5.map(this.velocity.x, 0, p5.width, 0, p5.radians(1000)));
         p5.translate(this.position.x, this.position.y, this.position.z);
         p5.fill(this.color);
         p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
@@ -119,15 +122,15 @@ function createSketch (settings) {
         this.position.y += (this.initialPosition.y - this.position.y) * 0.05;
         this.position.z += (this.initialPosition.z - this.position.z) * 0.05;
 
-        this.velocity.x *= 0.9;
-        this.velocity.y *= 0.9;
-        this.velocity.z *= 0.9;
+        this.velocity.x *= 0.93;
+        this.velocity.y *= 0.94;
+        this.velocity.z *= 0.96;
       }
 
       crash = () => {
-        this.velocity.x = -30 + Math.random() * 60;
-        this.velocity.y = -30 + Math.random() * 60;
-        this.velocity.z = -30 + Math.random() * 60;
+        this.velocity.x = -50 + Math.random() * 100;
+        this.velocity.y = -50 + Math.random() * 100;
+        this.velocity.z = -50 + Math.random() * 100;
       }
       
     }
