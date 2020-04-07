@@ -66,11 +66,19 @@ function createSketch(data) {
         this.position = { x: 0, y: 0, z: 0 };
         this.velocity = { x: 0, y: 0, z: 0 };
         this.initialPosition = { x: 0, y: 0, z: 0 };
+        this.currentPosition = { x: 0, y: 0, z: 0 };
+        this.finalPosition = { x: 0, y: 0, z: 0 };
         this.rotation = 0;
         this.scale = 1;
         
         this.specular = (p5.brightness(this.color) < 18) ? false : true;
         this.calculateCenter();
+
+        var angle = Math.random()*(Math.PI*2);
+        var spread = 100;
+        var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
+        this.finalPosition.x = Math.cos(angle)*radius;
+        this.finalPosition.y = Math.sin(angle)*radius;
 
         // this.velocity.z = p5.map(this.position.x, -imageWidth/2, imageWidth/2, 0.1, 5);
       }
@@ -141,13 +149,17 @@ function createSketch(data) {
       }
 
       move = function() {
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-        this.position.z += this.velocity.z;
+        var a = p5.map(p5.mouseX, 0, p5.width, 0, 1);
+        this.currentPosition.x = this.finalPosition.x*a + this.initialPosition.x*(1-a);
+        this.currentPosition.y = this.finalPosition.y*a + this.initialPosition.y*(1-a);
 
-        // this.position.x += (this.initialPosition.x - this.position.x) * 0.05;
-        // this.position.y += (this.initialPosition.y - this.position.y) * 0.05;
-        // this.position.z += (this.initialPosition.z - this.position.z) * 0.05;
+        // this.position.x += this.velocity.x;
+        // this.position.y += this.velocity.y;
+        // this.position.z += this.velocity.z;
+
+        this.position.x += (this.currentPosition.x - this.position.x) * 0.5;
+        this.position.y += (this.currentPosition.y - this.position.y) * 0.5;
+        this.position.z += (this.currentPosition.z - this.position.z) * 0.5;
 
         // this.velocity.x *= 0.93;
         // this.velocity.y *= 0.94;
