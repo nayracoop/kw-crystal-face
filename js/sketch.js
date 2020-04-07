@@ -5,7 +5,7 @@ var dataURL = "new_color.json";
 var depth = 1.5;
 var imageWidth = 720;
 var imageHeight; // auto
-var plainMode = false;
+var plainMode = true;
 
 axios.get(dataURL).then(function(response) {
   var data = response.data;
@@ -74,9 +74,12 @@ function createSketch(data) {
         this.specular = (p5.brightness(this.color) < 18) ? false : true;
         this.calculateCenter();
 
-        var angle = Math.random()*(Math.PI*2);
+        
+        var angle = Math.atan2(this.initialPosition.y+140, this.initialPosition.x-20); // Math.random()*(Math.PI*2);
+        console.log(angle);
         var spread = 100;
         var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
+
         this.finalPosition.x = Math.cos(angle)*radius;
         this.finalPosition.y = Math.sin(angle)*radius;
 
@@ -129,7 +132,9 @@ function createSketch(data) {
       draw = function() {
         p5.push();
         if(plainMode) {
-          p5.translate(this.position.x, this.position.y);
+          p5.rotate(p5.radians(this.rotation));
+          p5.translate(this.position.x, this.position.y, this.position.z);
+          p5.scale(this.scale);
           p5.fill(this.color);
           p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
         } else {
@@ -149,9 +154,23 @@ function createSketch(data) {
       }
 
       move = function() {
-        var a = p5.map(p5.mouseX, 0, p5.width, 0, 1);
-        this.currentPosition.x = this.finalPosition.x*a + this.initialPosition.x*(1-a);
-        this.currentPosition.y = this.finalPosition.y*a + this.initialPosition.y*(1-a);
+        
+        var r = p5.map(p5.mouseX - (p5.width*0.1 + this.initialPosition.x*-0.5), 0, p5.width/3, 0, 1);
+        var s = p5.map(p5.mouseX - (p5.width*0.15 + this.initialPosition.x*-0.5), 0, p5.width/3, 0, 1);
+        var y = p5.map(p5.mouseX - (p5.width*0.25 + this.initialPosition.y*-1), 0, p5.width/2, 0, 1);
+        var x = p5.map(p5.mouseX - (p5.width*0.25 + this.initialPosition.y*-1), 0, p5.width/2, 0, 1);
+        if(y < 0) y = 0;
+        if(y > 1) y = 1;
+        if(x < 0) x = 0;
+        if(x > 1) x = 1;
+        if(s < 0) s = 0;
+        if(s > 1) s = 1;
+        if(r < 0) r = 0;
+        if(r > 1) r = 1;
+
+        this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
+        this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
+        this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, -500, 300)*s;
 
         // this.position.x += this.velocity.x;
         // this.position.y += this.velocity.y;
@@ -160,6 +179,13 @@ function createSketch(data) {
         this.position.x += (this.currentPosition.x - this.position.x) * 0.5;
         this.position.y += (this.currentPosition.y - this.position.y) * 0.5;
         this.position.z += (this.currentPosition.z - this.position.z) * 0.5;
+
+        this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.75, 0.75)*s;
+
+        this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.2, -0.2) * r;
+        // if(this.rotation < 0) this.rotation = 360 + this.rotation;
+        // else if(this.rotation > 360) this.rotation = this.rotation - 360;
+        this.rotation *= p5.map(r, 0, 1, 0.7, 1);
 
         // this.velocity.x *= 0.93;
         // this.velocity.y *= 0.94;
