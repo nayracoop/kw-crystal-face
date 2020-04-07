@@ -77,7 +77,6 @@ function createSketch(data) {
         
         var angle = Math.atan2(this.initialPosition.y+140, this.initialPosition.x-20) + p5.random(p5.radians(-65), p5.radians(65));
         // var angle = Math.random()*(Math.PI*2);
-        console.log(angle);
         var spread = 100;
         var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
 
@@ -157,11 +156,13 @@ function createSketch(data) {
       }
 
       move = function() {
+
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
         
-        var r = p5.map(p5.mouseX - (p5.width*0.1 + this.initialPosition.x*-0.5), 0, p5.width*0.5, 0, 1);
-        var s = p5.map(p5.mouseX - (p5.width*0.15 + this.initialPosition.x*-0.5), 0, p5.width/3, 0, 1);
-        var y = p5.map(p5.mouseX - (p5.width*0.25 + this.initialPosition.y*-1), 0, p5.width/2, 0, 1);
-        var x = p5.map(p5.mouseX - (p5.width*0.25 + this.initialPosition.y*-1), 0, p5.width/2, 0, 1);
+        var r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.5, 0, 1);
+        var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/3, 0, 1);
+        var y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+        var x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
         if(y < 0) y = 0;
         if(y > 1) y = 1;
         if(x < 0) x = 0;
@@ -179,9 +180,9 @@ function createSketch(data) {
         // this.position.y += this.velocity.y;
         // this.position.z += this.velocity.z;
 
-        this.position.x += (this.currentPosition.x - this.position.x) * 0.25;
-        this.position.y += (this.currentPosition.y - this.position.y) * 0.25;
-        this.position.z += (this.currentPosition.z - this.position.z) * 0.15;
+        this.position.x += (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
+        this.position.y += (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
+        this.position.z += (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
 
         this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.75, 0.75)*s;
 

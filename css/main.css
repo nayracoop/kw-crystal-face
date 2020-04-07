@@ -11,4 +11,19 @@ body {
   top:0;
   left: 0;
   display: block;
+  z-index: -1;
+}
+
+#wrapper {
+  margin-top: 100vh;
+  height: 100vh;
+  display: grid;
+}
+
+h1 {
+  color: #fff;
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+  align-self: center;
 }
