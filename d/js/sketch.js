@@ -44,12 +44,10 @@ function createSketch(data) {
       p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -p5.radians(5), p5.radians(5)));
       p5.rotateX(p5.map(p5.mouseY, 0, p5.height, p5.radians(5), -p5.radians(5)));
 
-      // p5.blendMode(p5.ADD);
       for(var i = 0; i < fragments.length; i++) {
         fragments[i].draw();
         fragments[i].move();
       }
-      // p5.blendMode(p5.BLEND);
     }
 
     function illuminate() {
@@ -63,8 +61,6 @@ function createSketch(data) {
 
       constructor(points, color) {
         this.points = this.sanitizePoints(points);
-        this.nextColor = p5.color('#' + color);
-        this.currentColor = p5.color('#' + color);
         this.color = p5.color('#' + color);
 
         this.position = { x: 0, y: 0, z: 0 };
@@ -81,7 +77,7 @@ function createSketch(data) {
         this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
         this.time = -1;
         
-        var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(p5.radians(-65), p5.radians(65));
+        var angle = Math.atan2(this.initialPosition.y+140*1, this.initialPosition.x-20*1) + p5.random(p5.radians(-65), p5.radians(65));
         // var angle = Math.random()*(Math.PI*2);
         var spread = 100;
         var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
@@ -146,10 +142,9 @@ function createSketch(data) {
           p5.fill(this.color);
           p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
         } else {
-          p5.scale(this.scale);
           p5.rotate(p5.radians(this.rotation));
           p5.translate(this.position.x, this.position.y, this.position.z);
-          p5.rotate(p5.radians(this.rotation)*-5);
+          p5.scale(this.scale);
           if(this.specular) {
             p5.specularMaterial(this.color);
             p5.shininess(10);
@@ -170,14 +165,13 @@ function createSketch(data) {
 
         if(scrollY && scrollY > 0 && this.time < 0) {
           this.time = p5.millis();
-          // this.currentColor = p5.color('#000');
         } else if(scrollY == 0 && this.time >= 0) {
           this.time = -1;
         }
         
         if(p5.millis() - this.time > this.delay) {
           var r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
-          var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
+          var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/3, 0, 1);
           var y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
           var x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
           if(y < 0) y = 0;
@@ -191,9 +185,8 @@ function createSketch(data) {
 
           this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
           this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
-          this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, 0, 50)*s;
+          this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, -10, 20)*s;
 
-          
           // this.position.x += this.velocity.x;
           // this.position.y += this.velocity.y;
           // this.position.z += this.velocity.z;
@@ -202,21 +195,11 @@ function createSketch(data) {
           this.position.y += (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
           this.position.z += (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
 
-          this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.25, 0.25)*s;
+          this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.75, 0.75)*s;
 
           this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.8, -0.8) * r;
           this.rotation = this.rotation % 360;
           this.rotation *= p5.map(r, 0, 1, 0.7, 1);
-
-          // var hhh = p5.red(this.currentColor);
-          // var sss = p5.green(this.currentColor);
-          // var bbb = p5.blue(this.currentColor);
-          // hhh += (p5.red(this.nextColor) - hhh) * 0.1;
-          // sss += (p5.green(this.nextColor) - sss) * 0.1;
-          // bbb += (p5.blue(this.nextColor) - bbb) * 0.1;
-          // this.currentColor = p5.color(hhh, sss, bbb);
-          // this.color =  p5.color(hhh, sss, bbb); //p5.color((p5.hue(this.nextColor) - p5.hue(this.currentColor)) * 0.5, (p5.saturation(this.nextColor) - p5.saturation(this.currentColor)) * 0.5, (p5.brightness(this.nextColor) - p5.brightness(this.currentColor)) * 0.5);
-
 
           // this.velocity.x *= 0.93;
           // this.velocity.y *= 0.94;
