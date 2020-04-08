@@ -69,13 +69,15 @@ function createSketch(data) {
         this.currentPosition = { x: 0, y: 0, z: 0 };
         this.finalPosition = { x: 0, y: 0, z: 0 };
         this.rotation = 0;
-        this.scale = 1;
+        this.scale = 0;
         
         this.specular = (p5.brightness(this.color) < 18) ? false : true;
         this.calculateCenter();
 
+        this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
+        this.time = -1;
         
-        var angle = Math.atan2(this.initialPosition.y+140, this.initialPosition.x-20) + p5.random(p5.radians(-65), p5.radians(65));
+        var angle = Math.atan2(this.initialPosition.y+140*-1, this.initialPosition.x-20*0) + p5.random(p5.radians(-65), p5.radians(65));
         // var angle = Math.random()*(Math.PI*2);
         var spread = 100;
         var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
@@ -121,6 +123,7 @@ function createSketch(data) {
 
         this.position = { x, y, z };
         this.initialPosition = { x, y, z };
+        this.currentPosition = { x, y, z };
 
         for(var i = 0; i < this.points.length; i++) {
           this.points[i].x = this.points[i].x - this.position.x;
@@ -134,6 +137,7 @@ function createSketch(data) {
         if(plainMode) {
           p5.rotate(p5.radians(this.rotation));
           p5.translate(this.position.x, this.position.y, this.position.z);
+          p5.rotate(p5.radians(this.rotation)*-5);
           p5.scale(this.scale);
           p5.fill(this.color);
           p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
@@ -158,42 +162,49 @@ function createSketch(data) {
       move = function() {
 
         var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+
+        if(scrollY && scrollY > 0 && this.time < 0) {
+          this.time = p5.millis();
+        } else if(scrollY == 0 && this.time >= 0) {
+          this.time = -1;
+        }
         
-        var r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.5, 0, 1);
-        var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/3, 0, 1);
-        var y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-        var x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-        if(y < 0) y = 0;
-        if(y > 1) y = 1;
-        if(x < 0) x = 0;
-        if(x > 1) x = 1;
-        if(s < 0) s = 0;
-        if(s > 1) s = 1;
-        if(r < 0) r = 0;
-        if(r > 1) r = 1;
+        if(p5.millis() - this.time > this.delay) {
+          var r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
+          var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/3, 0, 1);
+          var y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+          var x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+          if(y < 0) y = 0;
+          if(y > 1) y = 1;
+          if(x < 0) x = 0;
+          if(x > 1) x = 1;
+          if(s < 0) s = 0;
+          if(s > 1) s = 1;
+          if(r < 0) r = 0;
+          if(r > 1) r = 1;
 
-        this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
-        this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
-        this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, -500, 300)*s;
+          this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
+          this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
+          this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, -500, 300)*s;
 
-        // this.position.x += this.velocity.x;
-        // this.position.y += this.velocity.y;
-        // this.position.z += this.velocity.z;
+          // this.position.x += this.velocity.x;
+          // this.position.y += this.velocity.y;
+          // this.position.z += this.velocity.z;
 
-        this.position.x += (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
-        this.position.y += (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
-        this.position.z += (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
+          this.position.x += (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
+          this.position.y += (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
+          this.position.z += (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
 
-        this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.75, 0.75)*s;
+          this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.75, 0.75)*s;
 
-        this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.2, -0.2) * r;
-        // if(this.rotation < 0) this.rotation = 360 + this.rotation;
-        // else if(this.rotation > 360) this.rotation = this.rotation - 360;
-        this.rotation *= p5.map(r, 0, 1, 0.7, 1);
+          this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.8, -0.8) * r;
+          this.rotation = this.rotation % 360;
+          this.rotation *= p5.map(r, 0, 1, 0.7, 1);
 
-        // this.velocity.x *= 0.93;
-        // this.velocity.y *= 0.94;
-        // this.velocity.z *= 0.96;
+          // this.velocity.x *= 0.93;
+          // this.velocity.y *= 0.94;
+          // this.velocity.z *= 0.96;
+        }
       }
       
     }
