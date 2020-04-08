@@ -52,9 +52,9 @@ function createSketch(data) {
 
     function illuminate() {
       p5.ambientLight(255);
-      p5.pointLight(30+p5.sin(p5.radians(p5.millis()/30))*50,30,5,-80,-20,300);
+      // p5.pointLight(30+p5.sin(p5.radians(p5.millis()/30))*50,30,5,-80,-20,300);
       // pointLight(20,100,200,480,-220,300);
-      p5.pointLight(30,5,30+p5.sin(p5.radians(p5.millis()/20))*50,80,80,300);
+      // p5.pointLight(30,5,30+p5.sin(p5.radians(p5.millis()/20))*50,80,80,300);
     }
 
     class Fragment {
@@ -79,8 +79,9 @@ function createSketch(data) {
         
         var angle = Math.atan2(this.initialPosition.y+140*-1, this.initialPosition.x-20*0) + p5.random(p5.radians(-65), p5.radians(65));
         // var angle = Math.random()*(Math.PI*2);
-        var spread = 100;
-        var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
+        var spread = 300;
+        // equation: Math.random * (max + min) - min
+        var radius = Math.random()*spread + (p5.windowHeight/2-spread/6);
 
         this.finalPosition.x = Math.cos(angle)*radius;
         this.finalPosition.y = Math.sin(angle)*radius;
@@ -204,6 +205,7 @@ function createSketch(data) {
           // this.velocity.x *= 0.93;
           // this.velocity.y *= 0.94;
           // this.velocity.z *= 0.96;
+          // document.getElementById("wrapper").style.visibility = s === 1 ? "visible" : "hidden";
         }
       }
       
