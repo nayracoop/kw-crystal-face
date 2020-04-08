@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; 
 
 var sketch;
-var dataURL = "new_color.json";
+var dataURL = "super_color.json";
 var depth = 1.5;
 var imageWidth = 720;
 var imageHeight; // auto
@@ -35,14 +35,15 @@ function createSketch(data) {
       p5.background(0);
       p5.noStroke();
       for(var i = 0; i < data.triangles.length; i++)  fragments.push(new Fragment(data.triangles[i].points, data.triangles[i].color));
+      p5.translate(0, 100, 0);
       //p5.colorMode(p5.HSB, 360, 100, 100);
     }
     
     p5.draw = function() { 
       p5.background(0);
       if(!plainMode) illuminate();
-      p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -p5.radians(5), p5.radians(5)));
-      p5.rotateX(p5.map(p5.mouseY, 0, p5.height, p5.radians(5), -p5.radians(5)));
+      // p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -p5.radians(5), p5.radians(5)));
+      // p5.rotateX(p5.map(p5.mouseY, 0, p5.height, p5.radians(5), -p5.radians(5)));
 
       for(var i = 0; i < fragments.length; i++) {
         fragments[i].draw();
@@ -79,8 +80,8 @@ function createSketch(data) {
         
         var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(p5.radians(-65), p5.radians(65));
         // var angle = Math.random()*(Math.PI*2);
-        var spread = 100;
-        var radius = Math.random()*spread + (p5.windowHeight/2-spread/2);
+        var spread = 300;
+        var radius = Math.random()*spread + (p5.windowHeight/2);
 
         this.finalPosition.x = Math.cos(angle)*radius;
         this.finalPosition.y = Math.sin(angle)*radius;
@@ -134,6 +135,7 @@ function createSketch(data) {
 
       draw = function() {
         p5.push();
+        p5.translate(0,100,0);
         if(plainMode) {
           p5.scale(this.scale);
           p5.rotate(p5.radians(this.rotation));

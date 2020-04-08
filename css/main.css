@@ -29,6 +29,7 @@ h1 {
 }
 
 #cross {
+  width: 30%;
   color: #fff;
   align-self: center;
   margin:auto

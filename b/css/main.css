@@ -27,3 +27,11 @@ h1 {
   text-align: center;
   align-self: center;
 }
+
+
+#cross {
+  width: 30%;
+  color: #fff;
+  align-self: center;
+  margin:auto
+}
