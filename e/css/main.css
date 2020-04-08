@@ -30,6 +30,7 @@ h1 {
 
 #cross {
   width: 30%;
+  max-width: 300px;
   color: #fff;
   align-self: center;
   margin:auto
