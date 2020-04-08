@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; 
 
 var sketch;
-var dataURL = "new_color.json";
+var dataURL = "super_color.json";
 var depth = 1.5;
 var imageWidth = 720;
 var imageHeight; // auto
