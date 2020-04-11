@@ -31,7 +31,10 @@ function createSketch(data) {
     var fragments = []
     
     p5.setup = function() {
-      p5.setAttributes('antialias', true);
+      p5.setAttributes({
+        antialias: true,
+        alpha: false,
+      });
       p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL);
       p5.background(0);
       p5.noStroke();
@@ -90,7 +93,7 @@ function createSketch(data) {
         // this.velocity.z = p5.map(this.position.x, -imageWidth/2, imageWidth/2, 0.1, 5);
       }
 
-      sanitizePoints = function(points) {
+      sanitizePoints(points) {
         if(points.length == 0) return null;
 
         var count = 0;
@@ -108,7 +111,7 @@ function createSketch(data) {
         return (cleanedPoints.length == 3) ? cleanedPoints : null;
       }
       
-      calculateCenter = () => {
+      calculateCenter() {
 
         if(!this.points) return;
         
@@ -134,7 +137,7 @@ function createSketch(data) {
         }
       }
 
-      draw = function() {
+      draw() {
         p5.push();
         p5.translate(0,100,0);
         if(plainMode) {
@@ -163,7 +166,7 @@ function createSketch(data) {
         p5.pop();
       }
 
-      move = function() {
+      move() {
 
         var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 

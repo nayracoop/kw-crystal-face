@@ -31,7 +31,10 @@ function createSketch(data) {
     var fragments = []
     
     p5.setup = function() {
-      p5.setAttributes('antialias', true);
+      p5.setAttributes({
+        antialias: true,
+        alpha: false,
+      });
       p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL);
       p5.background(0);
       p5.noStroke();
