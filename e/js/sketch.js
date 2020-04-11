@@ -53,7 +53,6 @@ function createSketch(data) {
         fragments[i].move();
       }
       let fps = p5.frameRate();
-      console.log(fps);
     }
 
     function illuminate() {
