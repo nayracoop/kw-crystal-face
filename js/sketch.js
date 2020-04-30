@@ -27,6 +27,8 @@ axios.get(dataURL).then(function(response) {
 function createSketch(data) {
   
   return function (p5) {
+
+    p5.disableFriendlyErrors = true; 
     
     var fragments = []
     
@@ -36,27 +38,40 @@ function createSketch(data) {
       p5.noStroke();
       for(var i = 0; i < data.triangles.length; i++)  fragments.push(new Fragment(data.triangles[i].points, data.triangles[i].color));
       //p5.colorMode(p5.HSB, 360, 100, 100);
+      p5.rectMode(p5.CENTER);
     }
     
     p5.draw = function() { 
-      p5.background(0);
+      //p5.background(0);
+      p5.clear();
+
       if(!plainMode) illuminate();
-      p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -p5.radians(5), p5.radians(5)));
-      p5.rotateX(p5.map(p5.mouseY, 0, p5.height, p5.radians(5), -p5.radians(5)));
+      p5.rotateY(radians(Math.sin(p5.frameCount*0.1)/2));
+      //p5.rotateX(p5.map(p5.mouseY, 0, p5.height, radians(1), -radians(1)));
 
       // p5.blendMode(p5.ADD);
       for(var i = 0; i < fragments.length; i++) {
+        if((i+p5.frameCount)%2 == 0) {
+
+        }
         fragments[i].draw();
         fragments[i].move();
       }
       // p5.blendMode(p5.BLEND);
+
+      let fps = p5.frameRate();
+      console.log(fps)
+    }
+
+    function radians(val) {
+      return  val * (Math.PI/180)
     }
 
     function illuminate() {
       p5.ambientLight(255);
-      // p5.pointLight(30+p5.sin(p5.radians(p5.millis()/30))*50,30,5,-80,-20,300);
+      // p5.pointLight(30+Math.sin(radians(p5.millis()/30))*50,30,5,-80,-20,300);
       // pointLight(20,100,200,480,-220,300);
-      // p5.pointLight(30,5,30+p5.sin(p5.radians(p5.millis()/20))*50,80,80,300);
+      // p5.pointLight(30,5,30+Math.sin(radians(p5.millis()/20))*50,80,80,300);
     }
 
     class Fragment {
@@ -81,7 +96,7 @@ function createSketch(data) {
         this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
         this.time = -1;
         
-        var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(p5.radians(-65), p5.radians(65));
+        var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + (-65 + Math.random()*130); //p5.random(radians(-65), radians(65));
         // var angle = Math.random()*(Math.PI*2);
         var spread = 300;
         // equation: Math.random * (max + min) - min
@@ -138,19 +153,20 @@ function createSketch(data) {
       }
 
       draw = function() {
+
         p5.push();
         if(plainMode) {
           p5.scale(this.scale);
-          p5.rotate(p5.radians(this.rotation));
+          p5.rotate(radians(this.rotation));
           p5.translate(this.position.x, this.position.y, this.position.z);
-          p5.rotate(p5.radians(this.rotation)*-5);
+          p5.rotate(radians(this.rotation)*-5);
           p5.fill(this.color);
           p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
         } else {
           p5.scale(this.scale);
-          p5.rotate(p5.radians(this.rotation));
+          p5.rotate(radians(this.rotation));
           p5.translate(this.position.x, this.position.y, this.position.z);
-          p5.rotate(p5.radians(this.rotation)*-5);
+          p5.rotate(radians(this.rotation)*-5);
           if(this.specular) {
             p5.specularMaterial(this.color);
             p5.shininess(10);
@@ -168,8 +184,9 @@ function createSketch(data) {
       move = function() {
 
         var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+        if(scrollY < 35) scrollY = 35; 
 
-        if(scrollY && scrollY > 0 && this.time < 0) {
+        if(scrollY && scrollY > 35 && this.time < 0) {
           this.time = p5.millis();
           // this.currentColor = p5.color('#000');
         } else if(scrollY == 0 && this.time >= 0) {
