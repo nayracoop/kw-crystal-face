@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; 
 
 var sketch;
-var dataURL = "super_color.json";
+var dataURL = "final_color.json";
 var depth = 1.5;
 var imageWidth = 720;
 var imageHeight; // auto
@@ -50,7 +50,7 @@ function createSketch(data) {
       p5.clear();
       
       if(!plainMode) illuminate();
-      p5.rotateY(radians(Math.sin(p5.frameCount*0.1)/2));
+      p5.rotateY(radians(Math.sin(p5.millis()*0.0001)/2));
       // p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -radians(5), radians(5)));
       // p5.rotateX(p5.map(p5.mouseY, 0, p5.height, radians(5), -radians(5)));
 
@@ -181,10 +181,11 @@ function createSketch(data) {
 
       move(sy) {
         
+        var sMin = 0;
         var scrollY = sy;
-        if(scrollY < 40) scrollY = 40; 
+        if(scrollY < sMin) scrollY = sMin; 
 
-        if(scrollY && scrollY > 40 && this.time < 0) {
+        if(scrollY && scrollY > sMin && this.time < 0) {
           this.time = p5.millis();
         } else if(scrollY == 0 && this.time >= 0) {
           this.time = -1;
