@@ -3,7 +3,7 @@ p5.disableFriendlyErrors = true;
 var sketch;
 var dataURL = "final_color.json";
 var depth = 1.5;
-var imageWidth = 720;
+var imageWidth = (screen.width < 720) ? screen.width + 80 : 720;
 var imageHeight; // auto
 var plainMode = true;
 var glitch = true;
@@ -60,8 +60,8 @@ function createSketch(data) {
         fragments[i].move(scrollY);
       }
 
-      let fps = p5.frameRate();
-      console.log(fps)
+      // let fps = p5.frameRate();
+      // console.log(fps)
     }
 
     p5.windowResized = function() {
@@ -101,7 +101,7 @@ function createSketch(data) {
         
         var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(radians(-65), radians(65));
         // var angle = Math.random()*(Math.PI*2);
-        var spread = 300;
+        var spread = (screen.width < 720) ? screen.width * 0.4 : 300;
         var radius = Math.random()*spread + (p5.windowHeight/2);
 
         this.finalPosition.x = Math.cos(angle)*radius;
@@ -229,7 +229,7 @@ function createSketch(data) {
 
           this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
           this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
-          this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, 0, 50)*s;
+          this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, 0, 100)*s;
 
           // this.position.x += this.velocity.x;
           // this.position.y += this.velocity.y;
