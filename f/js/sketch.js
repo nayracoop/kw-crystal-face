@@ -42,7 +42,6 @@ function createSketch(data) {
       p5.background(0);
       p5.noStroke();
       for(var i = 0; i < data.triangles.length; i++)  fragments.push(new Fragment(data.triangles[i].points, data.triangles[i].color));
-      p5.translate(0, 100, 0);
       //p5.colorMode(p5.HSB, 360, 100, 100);
     }
     
@@ -63,6 +62,10 @@ function createSketch(data) {
 
       let fps = p5.frameRate();
       console.log(fps)
+    }
+
+    p5.windowResized = function() {
+      p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
     }
 
     function radians(deg) {
@@ -103,6 +106,8 @@ function createSketch(data) {
 
         this.finalPosition.x = Math.cos(angle)*radius;
         this.finalPosition.y = Math.sin(angle)*radius;
+
+        this.glitchTime = p5.millis();
 
         // this.velocity.z = p5.map(this.position.x, -imageWidth/2, imageWidth/2, 0.1, 5);
       }
@@ -161,10 +166,12 @@ function createSketch(data) {
           p5.rotate(radians(this.rotation)*-5);
           p5.fill(this.color);
           if(this.points.length === 3) {
-            if(Math.random() < -0.1) {
+            if(this.initialPosition.y > 150 && Math.random() < 0.02 && p5.millis()%100 > 50) {
               //console.log("sdfsd")
-              p5.fill('#83002e');
-              p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
+              let colors = [ '#e14206', '#83002e', '#419fc9', '#55c25f' ]
+              let ic = Math.round(Math.random()*(colors.length-1));
+              p5.fill(colors[ic]);
+              p5.triangle(this.points[0].x + 0.025, this.points[0].y + 0.025, this.points[1].x + 0.025, this.points[1].y + 0.025, this.points[2].x + 0.025, this.points[2].y + 0.025);
               p5.fill(this.color);
             }
             p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
