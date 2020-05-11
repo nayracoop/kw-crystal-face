@@ -6,6 +6,7 @@ var depth = 1.5;
 var imageWidth = 720;
 var imageHeight; // auto
 var plainMode = true;
+var glitch = true;
 
 axios.get(dataURL).then(function(response) {
   var data = response.data;
@@ -50,11 +51,11 @@ function createSketch(data) {
       p5.clear();
       
       if(!plainMode) illuminate();
-      p5.rotateY(radians(Math.sin(p5.millis()*0.0001)/2));
       // p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -radians(5), radians(5)));
       // p5.rotateX(p5.map(p5.mouseY, 0, p5.height, radians(5), -radians(5)));
-
+      
       var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      if(glitch/* && scrollY < 20*/) p5.rotateY(radians(Math.sin(p5.millis()*0.0001)/2));
       for(var i = 0; i < fragments.length; i++) {
         fragments[i].draw();
         fragments[i].move(scrollY);
@@ -111,7 +112,7 @@ function createSketch(data) {
 
         var count = 0;
         var cleanedPoints = [];
-        for(var i = 0; i < points.length && count < 3; i++) {
+        for(var i = 0; i < points.length && count < 20; i++) {
           if(points[i]) {
             var repeated = false;
             for(var j = 0; j < i; j++) repeated = repeated || (points[i].x === points[j].x && points[i].y === points[j].y && points[i].z === points[j].z);
@@ -121,7 +122,7 @@ function createSketch(data) {
             }
           }
         }
-        return (cleanedPoints.length == 3) ? cleanedPoints : null;
+        return (cleanedPoints.length >= 3) ? cleanedPoints : null;
       }
       
       calculateCenter() {
@@ -152,14 +153,28 @@ function createSketch(data) {
 
       draw() {
         p5.push();
-        p5.translate(0,100,0);
+        //p5.translate(0,100,0);
         if(plainMode) {
           p5.scale(this.scale);
           p5.rotate(radians(this.rotation));
           p5.translate(this.position.x, this.position.y, this.position.z);
           p5.rotate(radians(this.rotation)*-5);
           p5.fill(this.color);
-          p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
+          if(this.points.length === 3) {
+            if(Math.random() < -0.1) {
+              //console.log("sdfsd")
+              p5.fill('#83002e');
+              p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
+              p5.fill(this.color);
+            }
+            p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
+          } else {
+            p5.beginShape();
+            for(var i = 0; i < this.points.length; i++) {
+              p5.vertex(this.points[i].x, this.points[i].y);
+            }
+            p5.endShape();
+          }
         } else {
           p5.scale(this.scale);
           p5.rotate(radians(this.rotation));
