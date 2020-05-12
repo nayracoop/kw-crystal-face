@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; 
 
 var sketch;
-var dataURL = "final_color.json";
+var dataURL = "kw-pieces.json";
 var depth = 1.5;
 var imageWidth = (screen.width < 720) ? screen.width + 80 : 720;
 var imageHeight; // auto

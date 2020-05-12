@@ -1,0 +1,31 @@
+html, body {
+    height: 100%;
+}
+
+body {
+  background: #10090A;
+}
+
+.p5Canvas {
+  position: fixed;
+  top:0;
+  left: 0;
+  display: block;
+  z-index: -1;
+}
+
+#wrapper {
+  margin-top: 100vh;
+  height: 100vh;
+  display: flex;
+}
+
+#cross {
+  display: block;
+  width: 30%;
+  max-width: 300px;
+  max-width: 300px;
+  color: #fff;
+  align-self: center;
+  margin:auto
+}
