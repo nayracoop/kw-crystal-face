@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+}
+
+body {
+  background: #10090A;
+}
+
+#wrapper {
+  margin-top: 100vh;
+  height: 100vh;
+  display: flex;
+}
+
+#cross {
+  display: block;
+  width: 30%;
+  max-width: 300px;
+  max-width: 300px;
+  color: #fff;
+  align-self: center;
+  margin:auto
+}

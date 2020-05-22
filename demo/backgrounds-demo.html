@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Demo: Ken Wilber</title>
+	<link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+	<div id="wrapper">
+		<img id="cross" src="img/cross.svg" alt="the image of a square cross">
+	</div>
+	<!-- Background color options -->
+	<script>
+		var colors = [ '#000', '#10090A', '#1c0f22', '#200b20', '#19050f', '#1a1a1d', '#f4696b', '#63c5ab', '#de89ac', '#9b7ad5', '#fd9372', '#ef9f64', 'url(https://upload.wikimedia.org/wikipedia/commons/e/ee/Eso1524aArtist%E2%80%99s_impression_of_CR7_the_brightest_galaxy_in_the_early_Universe.jpg)' ];
+		var n = 0;
+		window.addEventListener('keydown', function(e) {
+			if(e.code == 'ArrowRight') n++;
+			else if(e.code == 'ArrowLeft') n--;
+			if(n < 0) n = colors.length - 1;
+			if(n >= colors.length) n = 0;
+			document.body.style.background = colors[n] + ' no-repeat fixed';
+			document.body.style.backgroundSize = 'cover';
+		})
+	</script>
+	<!-- KW Animation Scripts -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+	<script src="js/kw.js"></script>
+</body>
+</html>
