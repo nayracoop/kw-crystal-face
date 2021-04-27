@@ -100,17 +100,17 @@ function createSketch(data) {
                 this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
                 this.time = -1;
                 
-                var angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(radians(-65), radians(65));
-                // var angle = Math.random()*(Math.PI*2);
-                var spread = (screen.width < 720) ? screen.width * 0.4 : 300;
-                var radius = Math.random()*spread + (p5.windowHeight/2);
+
+                // set final position in circle
+                const angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(radians(-65), radians(65));
+                const spread = (screen.width < 720) ? screen.width * 0.4 : 300;
+                const radius = Math.random()*spread + (p5.windowHeight/2);
 
                 this.finalPosition.x = Math.cos(angle)*radius;
                 this.finalPosition.y = Math.sin(angle)*radius;
 
                 this.glitchTime = p5.millis();
 
-                // this.velocity.z = p5.map(this.position.x, -imageWidth/2, imageWidth/2, 0.1, 5);
             }
 
             sanitizePoints(points) {
@@ -207,9 +207,8 @@ function createSketch(data) {
             }
 
             move(sy) {
-                
-                var sMin = 0;
-                var scrollY = sy;
+                let sMin = 0;
+                let scrollY = sy;
                 if(scrollY < sMin) scrollY = sMin; 
 
                 if(scrollY && scrollY > sMin && this.time < 0) {
@@ -219,40 +218,35 @@ function createSketch(data) {
                 }
                 
                 if(p5.millis() - this.time > this.delay) {
-                    var r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
-                    var s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
-                    var y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-                    var x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-                    if(y < 0) y = 0;
-                    if(y > 1) y = 1;
-                    if(x < 0) x = 0;
-                    if(x > 1) x = 1;
-                    if(s < 0) s = 0;
-                    if(s > 1) s = 1;
-                    if(r < 0) r = 0;
-                    if(r > 1) r = 1;
+                    let r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
+                    let s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
+                    let y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+                    let x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+
+                    r = p5.constrain(r, 0, 1);
+                    s = p5.constrain(s, 0, 1);
+                    y = p5.constrain(y, 0, 1);
+                    x = p5.constrain(x, 0, 1); 
 
                     this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
                     this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
                     this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, 0, 100)*s;
 
-                    // this.position.x += this.velocity.x;
-                    // this.position.y += this.velocity.y;
-                    // this.position.z += this.velocity.z;
 
-                    this.position.x += (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
-                    this.position.y += (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
-                    this.position.z += (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
+                    this.velocity.x = (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
+                    this.velocity.y = (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
+                    this.velocity.z = (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
+
+                    this.position.x += this.velocity.x;
+                    this.position.y += this.velocity.y;
+                    this.position.z += this.velocity.z;
 
                     this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.25, 0.25)*s;
 
-                    this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.8, -0.8) * r;
+                    this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.25, -0.25) * r;
                     this.rotation = this.rotation % 360;
                     this.rotation *= p5.map(r, 0, 1, 0.7, 1);
 
-                    // this.velocity.x *= 0.93;
-                    // this.velocity.y *= 0.94;
-                    // this.velocity.z *= 0.96;
                 }
             }
           
