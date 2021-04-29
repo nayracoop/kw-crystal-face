@@ -5,6 +5,7 @@ const GLITCH = true;
 const PLAIN_MODE = true;
 const DEPTH = 1.5;
 const imageWidth = (screen.width < 720) ? screen.width + 80 : 720;
+const START = Date.now();
 var imageHeight; // auto
 var sketch;
 
@@ -46,44 +47,64 @@ function createSketch(data) {
         }
         
         p5.draw = function() { 
+            let time = Date.now() - START;
             // p5.background(0);
             p5.clear();
             
-            if(!PLAIN_MODE) illuminate();
-            // p5.rotateY(p5.map(p5.mouseX, 0, p5.width, -radians(5), radians(5)));
-            // p5.rotateX(p5.map(p5.mouseY, 0, p5.height, radians(5), -radians(5)));
-            
             var scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-            if(GLITCH/* && scrollY < 20*/) p5.rotateY(radians(Math.sin(p5.millis()*0.0001)/2));
+            if(GLITCH) p5.rotateY(radians(Math.sin(time*0.0001)/2));
             for(var i = 0; i < fragments.length; i++) {
                 fragments[i].draw();
                 fragments[i].move(scrollY);
             }
 
-            // let fps = p5.frameRate();
-            // console.log(fps)
+            let fps = p5.frameRate();
+            if (fps < 24) {
+                //console.log(fps.toFixed(2));
+            }
         }
 
         p5.windowResized = function() {
             p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
         }
 
+        // UTILITIES
+
         function radians(deg) {
             return  deg * (Math.PI/180)
         }
 
-        function illuminate() {
-            p5.ambientLight(255);
-            p5.pointLight(30+Math.sin(radians(p5.millis()/30))*50,30,5,-80,-20,300);
-            // pointLight(20,100,200,480,-220,300);
-            p5.pointLight(30,5,30+Math.sin(radians(p5.millis()/20))*50,80,80,300);
+        function map (value, a, b, c, d) {
+            value = (value - a) / (b - a);
+            return c + value * (d - c);
         }
+
+        function constrain (value, min, max) {
+           return Math.min(Math.max(value, min), max);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function brightness(color) {
+            if (color) {
+                return ((color.r*299)+(color.g*587)+(color.b*114))/1000;
+            }
+        }
+          
 
         class Fragment {
 
             constructor(points, color) {
                 this.points = this.sanitizePoints(points);
                 this.color = p5.color('#' + color);
+                this.rawColor = color;
 
                 this.position = { x: 0, y: 0, z: 0 };
                 this.velocity = { x: 0, y: 0, z: 0 };
@@ -155,53 +176,34 @@ function createSketch(data) {
                     this.points[i].y = this.points[i].y - this.position.y;
                     this.points[i].z = this.points[i].z - this.position.z;
                 }
-                // if(this.points.length === 3) {
-                //   this.area = 0.5 * (Math.abs(this.points[0].x - this.points[1].x) * Math.abs(this.points[0].y - this.points[2].y))
-                // }
             }
 
             draw() {
                 p5.push();
 
-                if(PLAIN_MODE) {
-                    p5.scale(this.scale);
-                    p5.rotate(radians(this.rotation));
-                    p5.translate(this.position.x, this.position.y, this.position.z);
-                    p5.rotate(radians(this.rotation)*-5);
-                    p5.fill(this.color);
+                p5.scale(this.scale);
+                p5.rotate(radians(this.rotation));
+                p5.translate(this.position.x, this.position.y, this.position.z);
+                p5.rotate(radians(this.rotation)*-5);
+                p5.fill(this.color);
 
-                    if(this.points.length === 3) {
-                        if(this.initialPosition.y > 150 && Math.random() < 0.02 && p5.millis()%100 > 50) {
-                            let colors = [ '#e14206', '#83002e', '#419fc9', '#55c25f' ]
-                            let ic = Math.round(Math.random()*(colors.length-1));
-                            p5.fill(colors[ic]);
-                            p5.triangle(this.points[0].x + 0.025, this.points[0].y + 0.025, this.points[1].x + 0.025, this.points[1].y + 0.025, this.points[2].x + 0.025, this.points[2].y + 0.025);
-                            p5.fill(this.color);
-                        }
-                        p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
-                    } else {
-                        p5.beginShape();
-                        for(var i = 0; i < this.points.length; i++) {
-                            p5.vertex(this.points[i].x, this.points[i].y);
-                        }
-                        p5.endShape();
+                if(this.points.length === 3) {
+                    if(this.initialPosition.y > 150 && Math.random() < 0.02 && (Date.now() - START)%100 > 50) {
+                        let colors = [ '#e14206', '#83002e', '#419fc9', '#55c25f' ]
+                        let ic = Math.round(Math.random()*(colors.length-1));
+                        p5.fill(colors[ic]);
+                        p5.triangle(this.points[0].x + 0.025, this.points[0].y + 0.025, this.points[1].x + 0.025, this.points[1].y + 0.025, this.points[2].x + 0.025, this.points[2].y + 0.025);
+                        p5.fill(this.color);
                     }
+                    p5.triangle(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
                 } else {
-                    p5.scale(this.scale);
-                    p5.rotate(radians(this.rotation));
-                    p5.translate(this.position.x, this.position.y, this.position.z);
-                    p5.rotate(radians(this.rotation)*-5);
-                    if(this.specular) {
-                        p5.specularMaterial(this.color);
-                        p5.shininess(10);
-                    }
-                    else p5.emissiveMaterial(this.color);
                     p5.beginShape();
                     for(var i = 0; i < this.points.length; i++) {
-                        p5.vertex(this.points[i].x, this.points[i].y, this.points[i].z);
+                        p5.vertex(this.points[i].x, this.points[i].y);
                     }
                     p5.endShape();
                 }
+
 
                 p5.pop();
             }
@@ -212,40 +214,41 @@ function createSketch(data) {
                 if(scrollY < sMin) scrollY = sMin; 
 
                 if(scrollY && scrollY > sMin && this.time < 0) {
-                    this.time = p5.millis();
+                    this.time = Date.now();
                 } else if(scrollY == 0 && this.time >= 0) {
                     this.time = -1;
                 }
                 
-                if(p5.millis() - this.time > this.delay) {
-                    let r = p5.map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
-                    let s = p5.map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
-                    let y = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-                    let x = p5.map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+                if(Date.now() - this.time > this.delay) {
+                    let r = map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
+                    let s = map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
+                    let y = map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+                    let x = map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
 
-                    r = p5.constrain(r, 0, 1);
-                    s = p5.constrain(s, 0, 1);
-                    y = p5.constrain(y, 0, 1);
-                    x = p5.constrain(x, 0, 1); 
+                    r = constrain(r, 0, 1);
+                    s = constrain(s, 0, 1);
+                    y = constrain(y, 0, 1);
+                    x = constrain(x, 0, 1); 
 
                     this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
                     this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
-                    this.currentPosition.z = p5.map(p5.brightness(this.color), 0, 100, 0, 100)*s;
+                    this.currentPosition.z = map(p5.brightness(this.color), 0, 100, 0, 100)*s;
 
-
-                    this.velocity.x = (this.currentPosition.x - this.position.x) * p5.map(s, 0, 1, 0.35, 0.05);
-                    this.velocity.y = (this.currentPosition.y - this.position.y) * p5.map(s, 0, 1, 0.35, 0.05);
-                    this.velocity.z = (this.currentPosition.z - this.position.z) * p5.map(s, 0, 1, 0.25, 0.01);
+                    // this may be improved if we touch up the speed (velocity vector magnitude)
+                    // or if we add acceleration so velocity isnt instantly changed
+                    this.velocity.x = (this.currentPosition.x - this.position.x) * map(s, 0, 1, 0.35, 0.05);
+                    this.velocity.y = (this.currentPosition.y - this.position.y) * map(s, 0, 1, 0.35, 0.05);
+                    this.velocity.z = (this.currentPosition.z - this.position.z) * map(s, 0, 1, 0.25, 0.01);
 
                     this.position.x += this.velocity.x;
                     this.position.y += this.velocity.y;
                     this.position.z += this.velocity.z;
 
-                    this.scale = 1 + p5.map(p5.brightness(this.color), 0, 100, -0.25, 0.25)*s;
+                    this.scale = 1 + map(p5.brightness(this.color), 0, 100, -0.25, 0.25)*s;
 
-                    this.rotation += p5.map(p5.brightness(this.color), 0, 100, 0.25, -0.25) * r;
+                    this.rotation += map(p5.brightness(this.color), 0, 100, 0.25, -0.25) * r;
                     this.rotation = this.rotation % 360;
-                    this.rotation *= p5.map(r, 0, 1, 0.7, 1);
+                    this.rotation *= map(r, 0, 1, 0.7, 1);
 
                 }
             }
