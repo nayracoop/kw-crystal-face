@@ -6,6 +6,7 @@ const PLAIN_MODE = true;
 const DEPTH = 1.5;
 const imageWidth = (screen.width < 720) ? screen.width + 80 : 720;
 const START = Date.now();
+let height = window.innerHeight;
 var imageHeight; // auto
 var sketch;
 
@@ -60,12 +61,13 @@ function createSketch(data) {
 
             let fps = p5.frameRate();
             if (fps < 24) {
-                //console.log(fps.toFixed(2));
+                console.log(fps.toFixed(2));
             }
         }
 
         p5.windowResized = function() {
             p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
+            height = window.innerHeight;
         }
 
         // UTILITIES
@@ -94,6 +96,12 @@ function createSketch(data) {
 
         function brightness(color) {
             if (color) {
+                /*Math.sqrt(
+                    0.299 * (color.r * color.r) +
+                    0.587 * (color.g * color.g) +
+                    0.114 * (color.b * color.b)
+                );*/
+
                 return ((color.r*299)+(color.g*587)+(color.b*114))/1000;
             }
         }
@@ -115,7 +123,7 @@ function createSketch(data) {
                 this.scale = 0;
                 this.area = 500;
                 
-                this.specular = (p5.brightness(this.color) < 18) ? false : true;
+                this.specular = (brightness(hexToRgb(this.rawColor)) < 18) ? false : true;
                 this.calculateCenter();
 
                 this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
@@ -220,10 +228,10 @@ function createSketch(data) {
                 }
                 
                 if(Date.now() - this.time > this.delay) {
-                    let r = map(scrollY - (p5.height*0.1 + this.initialPosition.x*-0.5), 0, p5.height*0.25, 0, 1);
-                    let s = map(scrollY - (p5.height*0.15 + this.initialPosition.x*-0.5), 0, p5.height/5, 0, 1);
-                    let y = map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
-                    let x = map(scrollY - (p5.height*0.25 + this.initialPosition.y*-1), 0, p5.height/2, 0, 1);
+                    let r = map(scrollY - (height*0.1 + this.initialPosition.x*-0.5), 0, height*0.25, 0, 1);
+                    let s = map(scrollY - (height*0.15 + this.initialPosition.x*-0.5), 0, height/5, 0, 1);
+                    let y = map(scrollY - (height*0.25 + this.initialPosition.y*-1), 0, height/2, 0, 1);
+                    let x = map(scrollY - (height*0.25 + this.initialPosition.y*-1), 0, height/2, 0, 1);
 
                     r = constrain(r, 0, 1);
                     s = constrain(s, 0, 1);
@@ -232,7 +240,7 @@ function createSketch(data) {
 
                     this.currentPosition.x = this.finalPosition.x*x + this.initialPosition.x*(1-x);
                     this.currentPosition.y = this.finalPosition.y*y + this.initialPosition.y*(1-y);
-                    this.currentPosition.z = map(p5.brightness(this.color), 0, 100, 0, 100)*s;
+                    this.currentPosition.z = map(brightness(hexToRgb(this.rawColor)), 0, 100, 0, 100)*s;
 
                     // this may be improved if we touch up the speed (velocity vector magnitude)
                     // or if we add acceleration so velocity isnt instantly changed
@@ -244,9 +252,9 @@ function createSketch(data) {
                     this.position.y += this.velocity.y;
                     this.position.z += this.velocity.z;
 
-                    this.scale = 1 + map(p5.brightness(this.color), 0, 100, -0.25, 0.25)*s;
+                    this.scale = 1 + map(brightness(hexToRgb(this.rawColor)), 0, 100, -0.25, 0.25)*s;
 
-                    this.rotation += map(p5.brightness(this.color), 0, 100, 0.25, -0.25) * r;
+                    this.rotation += map(brightness(hexToRgb(this.rawColor)), 0, 100, 0.25, -0.25) * r;
                     this.rotation = this.rotation % 360;
                     this.rotation *= map(r, 0, 1, 0.7, 1);
 
