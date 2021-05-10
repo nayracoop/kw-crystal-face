@@ -40,7 +40,7 @@ function createSketch(data) {
                 antialias: true,
                 // alpha: false,
             });
-            p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL);
+            p5.createCanvas(window.innerWidth, window.innerHeight, p5.WEBGL);
             p5.background(0);
             p5.noStroke();
             for(var i = 0; i < data.triangles.length; i++)  fragments.push(new Fragment(data.triangles[i].points, data.triangles[i].color));
@@ -66,7 +66,7 @@ function createSketch(data) {
         }
 
         p5.windowResized = function() {
-            p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
+            p5.resizeCanvas(window.innerWidth, window.innerHeight);
             height = window.innerHeight;
         }
 
@@ -144,7 +144,7 @@ function createSketch(data) {
                 // set final position in circle
                 const angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + random(radians(-65), radians(65));
                 const spread = (screen.width < 720) ? screen.width * 0.4 : 300;
-                const radius = Math.random()*spread + (p5.windowHeight/2);
+                const radius = Math.random()*spread + (window.innerHeight/2);
 
                 this.finalPosition.x = Math.cos(angle)*radius;
                 this.finalPosition.y = Math.sin(angle)*radius;
