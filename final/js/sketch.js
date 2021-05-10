@@ -105,8 +105,18 @@ function createSketch(data) {
                 return ((color.r*299)+(color.g*587)+(color.b*114))/1000;
             }
         }
-          
 
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+        
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function distance(initialX, initialY, finalX, finalY) {
+            return Math.sqrt( Math.pow((finalX - initialX), 2) + Math.pow((finalY - initialY), 2));
+        }
         class Fragment {
 
             constructor(points, color) {
@@ -125,13 +135,14 @@ function createSketch(data) {
                 
                 this.specular = (brightness(hexToRgb(this.rawColor)) < 18) ? false : true;
                 this.calculateCenter();
-
-                this.delay = p5.dist(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
+                
+                this.delay = distance(this.initialPosition.x, this.initialPosition.y, 0, imageHeight/2) * 5 - 1000;
+                
                 this.time = -1;
                 
 
                 // set final position in circle
-                const angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + p5.random(radians(-65), radians(65));
+                const angle = Math.atan2(this.initialPosition.y+140*0, this.initialPosition.x-20*0) + random(radians(-65), radians(65));
                 const spread = (screen.width < 720) ? screen.width * 0.4 : 300;
                 const radius = Math.random()*spread + (p5.windowHeight/2);
 
@@ -152,8 +163,8 @@ function createSketch(data) {
                         var repeated = false;
                         for(var j = 0; j < i; j++) repeated = repeated || (points[i].x === points[j].x && points[i].y === points[j].y && points[i].z === points[j].z);
                         if(!repeated) {
-                        cleanedPoints.push({ x: points[i].x, y: points[i].y, z: points[i].z });
-                        count++;
+                            cleanedPoints.push({ x: points[i].x, y: points[i].y, z: points[i].z });
+                            count++;
                         }
                     }
                 }
